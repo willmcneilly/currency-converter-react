@@ -1,13 +1,9 @@
 'use strict';
 
 var React = require('react');
-var ReactLabel = require('./components/react-label');
-var start = new Date().getTime();
+var CurrencyApp = require('./components/currency-app');
 
-setInterval(function() {
-  React.render(
-    <ReactLabel elapsed={new Date().getTime() - start} />,
-    document.getElementById('react-container')
-  );
-
-}, 50);
+React.render(
+  <CurrencyApp/>,
+  document.getElementById('react-container')
+);
