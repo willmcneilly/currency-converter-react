@@ -8,8 +8,9 @@ module.exports = React.createClass({
   render: function() {
     return (
       <div className="currency">
-        <CurrencySelect/>
-        <CurrencyInput/>
+        {this.props.data.currencyType}
+        <CurrencySelect currentType={this.props.data.currencyType} supportedCurrencies={this.props.supportedCurrencies}/>
+        <CurrencyInput currencyValue={this.props.data.currencyValue}/>
       </div>
     );
   }
