@@ -17,11 +17,17 @@ module.exports = React.createClass({
     };
   },
 
+  getEndPoint: function(currency1, currency2) {
+    return "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.xchange%20where%20pair%20in%20(%22" + currency1 + currency2 + "%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback="
+  },
+
   handleCurrencyTypeChange: function(id, value) {
     var mutation = {};
     mutation[id] = {currencyType: {$set: value}};
     var newData = React.addons.update(this.state.data, mutation);
-    this.setState({data: newData});
+    this.setState({data: newData}, function(){
+      this.recalculateConversion()
+    });
   },
 
   handleCurrencyValueChange: function(id, value) {
@@ -36,11 +42,9 @@ module.exports = React.createClass({
 
   changeOppositeCurrencyValue: function(idThatWasChanged) {
     // We can assume there was only ever two ids, 0, 1
-
-
     var self = this;
     var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("POST", endPoint);
+    xmlhttp.open("POST", self.getEndPoint(self.state.data[0].currencyType, self.state.data[1].currencyType));
     xmlhttp.onreadystatechange = function(d) {
       if (xmlhttp.readyState == 4) {
         if(xmlhttp.status == 200){
@@ -49,7 +53,6 @@ module.exports = React.createClass({
           var exchangeRate = parseFloat(parsedData.query.results.rate.Rate);
           var oppositeID = idThatWasChanged === 1 ? 0 : 1;
           var mutation = {};
-
           var multiplier = parseFloat(self.state['data'][idThatWasChanged].currencyValue);
           var newRate = multiplier * exchangeRate;
           mutation[oppositeID] = {currencyValue: {$set: newRate}};
@@ -61,8 +64,29 @@ module.exports = React.createClass({
       }
     }
     xmlhttp.send();
+  },
 
-
+  recalculateConversion: function() {
+    var self = this;
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open("POST", self.getEndPoint(self.state.data[0].currencyType, self.state.data[1].currencyType));
+    xmlhttp.onreadystatechange = function(d) {
+      if (xmlhttp.readyState == 4) {
+        if(xmlhttp.status == 200){
+          var parsedData = JSON.parse(this.responseText);
+          var exchangeRate = parseFloat(parsedData.query.results.rate.Rate);
+          var multiplier = parseFloat(self.state['data'][0].currencyValue);
+          var mutation = {};
+          var newRate = multiplier * exchangeRate;
+          mutation[1] = {currencyValue: {$set: newRate}};
+          var newData = React.addons.update(self.state.data, mutation);
+          self.setState({data: newData});
+        } else {
+          console.log('error')
+        }
+      }
+    }
+    xmlhttp.send();
   },
 
   getExchangeRate: function() {
