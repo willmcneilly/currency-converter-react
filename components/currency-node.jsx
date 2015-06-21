@@ -18,7 +18,7 @@ module.exports = React.createClass({
     return (
       <div className="currency">
         {this.props.data.currencyType}
-        <CurrencySelect currentType={this.props.data.currencyType} supportedCurrencies={this.props.supportedCurrencies} onChange={this.handleTypeChange}  id={this.props.data.id}/>
+        <CurrencySelect currentType={this.props.data.currencyType} supportedCurrencies={this.props.supportedCurrencies} onChange={this.handleTypeChange}  id={this.props.data.key}/>
         <CurrencyInput currencyValue={this.props.data.currencyValue} id={this.props.data.key} onChange={this.handleValueChange} supportedCurrencies={this.props.supportedCurrencies}/>
       </div>
     );

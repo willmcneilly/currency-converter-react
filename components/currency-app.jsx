@@ -7,32 +7,28 @@ var _ = require('lodash');
 
 module.exports = React.createClass({
   getInitialState: function() {
-    return {data: [{key: 0, currencyType: "GBP", currencyValue: 0}, {key: 1, currencyType: "USD", currencyValue: 0}]};
+    return {data: [
+      {key: 0, currencyType: "GBP", currencyValue: 0},
+      {key: 1, currencyType: "USD", currencyValue: 0}
+      ]
+    };
   },
 
   handleCurrencyTypeChange: function(id, value) {
-    var data = this.state.data;
-    var clone = _.cloneDeep(data);
-    clone[id]['currencyType'] = value;
-    this.setState({data: clone});
+    var mutation = {};
+    mutation[id] = {currencyType: {$set: value}};
+    var newData = React.addons.update(this.state.data, mutation);
+    this.setState({data: newData});
   },
 
   handleCurrencyValueChange: function(id, value) {
-    // var d = this.state.data[id];
     var mutation = {};
     mutation[id] = {currencyValue: {$set: value}};
     var newData = React.addons.update(this.state.data, mutation);
     this.setState({data: newData}, function(e) {
+      // When this state is rendered, render the opposite
       this.changeOppositeCurrencyValue(id);
     });
-
-    // d['data'][id]['currencyValue'] = parseFloat(value);
-    // // this.replaceState(clone);
-    // this.forceUpdate();
-
-
-
-    //this.changeOppositeCurrencyValue(id);
   },
 
   changeOppositeCurrencyValue: function(idThatWasChanged) {
