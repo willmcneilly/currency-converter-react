@@ -3,6 +3,7 @@
 var React = require('react/addons');
 var TopBar = require('./top-bar');
 var CurrencyNode = require('./currency-node');
+var _ = require('lodash');
 
 module.exports = React.createClass({
   getInitialState: function() {
@@ -15,9 +16,21 @@ module.exports = React.createClass({
 
   handleCurrencyValueChange: function(id, value) {
     var data = this.state.data;
-    var clone = data.splice(0);
+    var clone = _.cloneDeep(data);
     clone[id]['currencyValue'] = value;
-    debugger;
+    this.setState({data: clone});
+
+    this.changeOppositeCurrencyValue(id);
+  },
+
+  changeOppositeCurrencyValue: function(idThatWasChanged) {
+    // We can assume there was only ever two ids, 0, 1
+    var oppositeID = idThatWasChanged === 1 ? 0 : 1;
+
+    var data = this.state.data;
+    var clone = _.cloneDeep(data);
+
+    clone[oppositeID]['currencyValue'] = Math.random();
     this.setState({data: clone});
   },
 
