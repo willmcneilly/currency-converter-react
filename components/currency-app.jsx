@@ -18,23 +18,19 @@ module.exports = React.createClass({
   },
 
   handleCurrencyValueChange: function(id, value) {
-    var data = this.state.data;
-    var clone = _.cloneDeep(data);
-    clone[id]['currencyValue'] = value;
-    this.setState({data: clone});
-
+    var d = this.state;
+    d['data'][id]['currencyValue'] = parseFloat(value);
+    // this.replaceState(clone);
+    this.forceUpdate();
     this.changeOppositeCurrencyValue(id);
   },
 
   changeOppositeCurrencyValue: function(idThatWasChanged) {
     // We can assume there was only ever two ids, 0, 1
     var oppositeID = idThatWasChanged === 1 ? 0 : 1;
-
-    var data = this.state.data;
-    var clone = _.cloneDeep(data);
-
-    clone[oppositeID]['currencyValue'] = Math.random();
-    this.setState({data: clone});
+    var d = this.state;
+    d['data'][oppositeID]['currencyValue'] = Math.floor(Math.random() * 100);
+    this.forceUpdate();
   },
 
   render: function() {
