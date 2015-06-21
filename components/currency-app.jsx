@@ -7,11 +7,14 @@ var _ = require('lodash');
 
 module.exports = React.createClass({
   getInitialState: function() {
-    return {data: [{id: 0, currencyType: "GBP", currencyValue: 10.00}, {id: 1, currencyType: "USD", currencyValue: 5.00}]};
+    return {data: [{id: 0, currencyType: "GBP", currencyValue: 0}, {id: 1, currencyType: "USD", currencyValue: 0}]};
   },
 
-  handleCurrencyTypeChange: function() {
-
+  handleCurrencyTypeChange: function(id, value) {
+    var data = this.state.data;
+    var clone = _.cloneDeep(data);
+    clone[id]['currencyType'] = value;
+    this.setState({data: clone});
   },
 
   handleCurrencyValueChange: function(id, value) {
@@ -37,7 +40,7 @@ module.exports = React.createClass({
   render: function() {
     var self = this;
     var nodes = this.state.data.map(function (nodeData) {
-      return <CurrencyNode data={nodeData} supportedCurrencies={self.props.supportedCurrencies} currencyTypeChange={self.props.handleCurrencyTypeChange} currencyValueChange={self.handleCurrencyValueChange}/>;
+      return <CurrencyNode data={nodeData} supportedCurrencies={self.props.supportedCurrencies} currencyTypeChange={self.handleCurrencyTypeChange} currencyValueChange={self.handleCurrencyValueChange}/>;
     });
 
     return(
